@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roadmap — Mercado de Trabalho em Programação</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131c;
+    --surface2: #1a1a28;
+    --border: #1e1e2e;
+    --python: #3b82f6;
+    --cpp: #f59e0b;
+    --career: #10b981;
+    --soft: #a855f7;
+    --accent: #f0f0f5;
+    --muted: #555570;
+    --done-bg: #0d2015;
+    --done-border: #10b981;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--accent);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    padding: 40px 20px 80px;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(59,130,246,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(59,130,246,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .container { max-width: 860px; margin: 0 auto; position: relative; z-index: 1; }
+  header { margin-bottom: 52px; animation: fadeDown 0.6s ease both; }
+  .tag {
+    display: inline-block;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--python);
+    border: 1px solid rgba(59,130,246,0.3);
+    border-radius: 4px;
+    padding: 4px 10px;
+    margin-bottom: 16px;
+  }
+  h1 { font-size: clamp(28px, 5vw, 48px); font-weight: 800; line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 12px; }
+  h1 span { color: var(--python); }
+  .subtitle { color: var(--muted); font-size: 15px; font-weight: 400; max-width: 540px; line-height: 1.6; }
+  .progress-wrap { margin-bottom: 48px; animation: fadeDown 0.7s 0.1s ease both; }
+  .progress-label { display: flex; justify-content: space-between; font-family: 'Space Mono', monospace; font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+  .progress-label span:last-child { color: var(--career); }
+  .progress-bar { height: 6px; background: var(--border); border-radius: 99px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--python), var(--career)); border-radius: 99px; transition: width 0.6s cubic-bezier(.4,0,.2,1); }
+  .legend { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 36px; animation: fadeDown 0.7s 0.15s ease both; }
+  .legend-item { display: flex; align-items: center; gap: 7px; font-size: 12px; font-family: 'Space Mono', monospace; color: var(--muted); }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .phase { margin-bottom: 44px; animation: fadeUp 0.5s ease both; }
+  .phase-header { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+  .phase-icon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+  .phase-title { font-size: 18px; font-weight: 800; letter-spacing: -0.01em; }
+  .phase-subtitle { font-size: 12px; font-family: 'Space Mono', monospace; color: var(--muted); margin-top: 2px; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+    position: relative;
+    overflow: hidden;
+    user-select: none;
+  }
+  .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; opacity: 0; transition: opacity 0.2s; }
+  .card:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
+  .card:hover::before { opacity: 1; }
+  .card.done { background: var(--done-bg); border-color: var(--done-border); }
+  .card.done::before { background: var(--career); opacity: 1; }
+  .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+  .card-emoji { font-size: 22px; }
+  .card-check {
+    width: 20px; height: 20px;
+    border-radius: 6px;
+    border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px;
+    color: transparent;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .card.done .card-check { background: var(--career); border-color: var(--career); color: white; }
+  .card-title { font-size: 14px; font-weight: 600; margin-bottom: 5px; line-height: 1.3; }
+  .card-desc { font-size: 12px; color: var(--muted); line-height: 1.5; font-weight: 400; }
+  .card-badge { display: inline-block; font-family: 'Space Mono', monospace; font-size: 10px; padding: 2px 7px; border-radius: 4px; margin-top: 10px; }
+  .card-hint { font-size: 10px; color: var(--muted); margin-top: 6px; font-family: 'Space Mono', monospace; opacity: 0.5; }
+
+  /* themes */
+  .python-theme .card:hover { border-color: rgba(59,130,246,0.5); }
+  .python-theme .card:hover::before, .python-theme .card-badge { background: rgba(59,130,246,0.15); color: var(--python); }
+  .python-theme .phase-icon { background: rgba(59,130,246,0.12); }
+  .python-theme .phase-title { color: var(--python); }
+  .cpp-theme .card:hover { border-color: rgba(245,158,11,0.5); }
+  .cpp-theme .card:hover::before, .cpp-theme .card-badge { background: rgba(245,158,11,0.15); color: var(--cpp); }
+  .cpp-theme .phase-icon { background: rgba(245,158,11,0.12); }
+  .cpp-theme .phase-title { color: var(--cpp); }
+  .career-theme .card:hover { border-color: rgba(16,185,129,0.5); }
+  .career-theme .card:hover::before, .career-theme .card-badge { background: rgba(16,185,129,0.15); color: var(--career); }
+  .career-theme .phase-icon { background: rgba(16,185,129,0.12); }
+  .career-theme .phase-title { color: var(--career); }
+  .soft-theme .card:hover { border-color: rgba(168,85,247,0.5); }
+  .soft-theme .card:hover::before, .soft-theme .card-badge { background: rgba(168,85,247,0.15); color: var(--soft); }
+  .soft-theme .phase-icon { background: rgba(168,85,247,0.12); }
+  .soft-theme .phase-title { color: var(--soft); }
+
+  .connector { display: flex; justify-content: center; margin: -20px 0 24px; opacity: 0.4; }
+  .connector-line { width: 2px; height: 30px; background: linear-gradient(to bottom, var(--border), transparent); }
+  .tip { border: 1px solid rgba(59,130,246,0.2); border-radius: 10px; padding: 16px 20px; margin-top: 48px; display: flex; gap: 14px; align-items: flex-start; background: rgba(59,130,246,0.04); }
+  .tip-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+  .tip-text { font-size: 13px; color: var(--muted); line-height: 1.6; }
+  .tip-text strong { color: var(--accent); }
+
+  /* MODAL */
+  .overlay {
+    position: fixed; inset: 0;
+    background: rgba(5,5,10,0.88);
+    backdrop-filter: blur(8px);
+    z-index: 100;
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s;
+  }
+  .overlay.open { opacity: 1; pointer-events: all; }
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    width: 100%;
+    max-width: 560px;
+    max-height: 88vh;
+    overflow-y: auto;
+    transform: translateY(24px) scale(0.97);
+    transition: transform 0.28s cubic-bezier(.4,0,.2,1);
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+  .overlay.open .modal { transform: translateY(0) scale(1); }
+  .modal-header {
+    padding: 22px 22px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    position: sticky; top: 0;
+    background: var(--surface);
+    border-radius: 18px 18px 0 0;
+    z-index: 2;
+  }
+  .modal-header-left { display: flex; gap: 12px; align-items: flex-start; }
+  .modal-emoji { font-size: 28px; flex-shrink: 0; margin-top: 2px; }
+  .modal-title { font-size: 19px; font-weight: 800; line-height: 1.2; margin-bottom: 5px; }
+  .modal-badge { display: inline-block; font-family: 'Space Mono', monospace; font-size: 10px; padding: 2px 8px; border-radius: 4px; }
+  .modal-close {
+    background: none; border: 1px solid var(--border); color: var(--muted);
+    width: 30px; height: 30px; border-radius: 8px; cursor: pointer; font-size: 14px;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .modal-close:hover { border-color: var(--accent); color: var(--accent); }
+  .modal-body { padding: 20px 22px 24px; }
+  .modal-section { margin-bottom: 24px; }
+  .modal-section:last-child { margin-bottom: 0; }
+  .modal-section-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 10px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .modal-section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .modal-topics { display: flex; flex-direction: column; gap: 8px; }
+  .modal-topic {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 14px; font-size: 13px; line-height: 1.5;
+  }
+  .modal-topic strong { display: block; margin-bottom: 2px; font-size: 13px; color: var(--accent); }
+  .modal-topic span { color: var(--muted); font-size: 12px; }
+  .modal-resources { display: flex; flex-direction: column; gap: 8px; }
+  .modal-resource {
+    display: flex; align-items: center; gap: 12px;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 14px;
+    color: var(--accent); cursor: pointer;
+    transition: border-color 0.2s, transform 0.15s;
+  }
+  .modal-resource:hover { border-color: rgba(59,130,246,0.4); transform: translateX(3px); }
+  .resource-icon { font-size: 18px; flex-shrink: 0; }
+  .resource-info { flex: 1; min-width: 0; }
+  .resource-name { font-size: 13px; font-weight: 600; display: block; }
+  .resource-desc { font-size: 11px; color: var(--muted); display: block; margin-top: 1px; }
+  .resource-free { font-family: 'Space Mono', monospace; font-size: 9px; padding: 2px 6px; border-radius: 4px; background: rgba(16,185,129,0.15); color: var(--career); flex-shrink: 0; }
+  .resource-arrow { color: var(--muted); font-size: 12px; flex-shrink: 0; }
+  .modal-done-btn {
+    width: 100%; margin-top: 20px; padding: 13px;
+    border-radius: 10px; border: none;
+    font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700;
+    cursor: pointer; transition: opacity 0.2s, transform 0.15s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .modal-done-btn:hover { opacity: 0.85; transform: translateY(-1px); }
+  .modal-done-btn.mark { background: var(--career); color: #fff; }
+  .modal-done-btn.unmark { background: var(--border); color: var(--muted); }
+
+  @keyframes fadeDown { from { opacity: 0; transform: translateY(-16px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  .phase:nth-child(1) { animation-delay: 0.1s; }
+  .phase:nth-child(2) { animation-delay: 0.2s; }
+  .phase:nth-child(3) { animation-delay: 0.3s; }
+  .phase:nth-child(4) { animation-delay: 0.4s; }
+  .phase:nth-child(5) { animation-delay: 0.5s; }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="tag">// roadmap pessoal</div>
+    <h1>Entrar no mercado<br>de <span>programação</span></h1>
+    <p class="subtitle">Clique em qualquer card para ver o que estudar e onde estudar de graça.</p>
+  </header>
+  <div class="progress-wrap">
+    <div class="progress-label"><span>Progresso geral</span><span id="pct">0%</span></div>
+    <div class="progress-bar"><div class="progress-fill" id="fill" style="width:0%"></div></div>
+  </div>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--python)"></div> Python</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--cpp)"></div> C++</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--career)"></div> Carreira</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--soft)"></div> Soft Skills</div>
+  </div>
+
+  <div class="phase python-theme">
+    <div class="phase-header">
+      <div class="phase-icon">🐍</div>
+      <div><div class="phase-title">Fase 1 — Solidificar Python</div><div class="phase-subtitle">Fundamentos sólidos antes de tudo</div></div>
+    </div>
+    <div class="cards" id="phase1"></div>
+  </div>
+  <div class="connector"><div class="connector-line"></div></div>
+
+  <div class="phase cpp-theme">
+    <div class="phase-header">
+      <div class="phase-icon">⚙️</div>
+      <div><div class="phase-title">Fase 2 — Iniciar C++</div><div class="phase-subtitle">Paralelamente ao Python</div></div>
+    </div>
+    <div class="cards" id="phase2"></div>
+  </div>
+  <div class="connector"><div class="connector-line"></div></div>
+
+  <div class="phase career-theme">
+    <div class="phase-header">
+      <div class="phase-icon">🚀</div>
+      <div><div class="phase-title">Fase 3 — Portfólio & Projetos</div><div class="phase-subtitle">O que o recrutador vai ver</div></div>
+    </div>
+    <div class="cards" id="phase3"></div>
+  </div>
+  <div class="connector"><div class="connector-line"></div></div>
+
+  <div class="phase career-theme">
+    <div class="phase-header">
+      <div class="phase-icon">💼</div>
+      <div><div class="phase-title">Fase 4 — Busca Ativa</div><div class="phase-subtitle">Candidaturas e entrevistas</div></div>
+    </div>
+    <div class="cards" id="phase4"></div>
+  </div>
+  <div class="connector"><div class="connector-line"></div></div>
+
+  <div class="phase soft-theme">
+    <div class="phase-header">
+      <div class="phase-icon">🧠</div>
+      <div><div class="phase-title">Fase 5 — Soft Skills</div><div class="phase-subtitle">Diferencial em qualquer vaga</div></div>
+    </div>
+    <div class="cards" id="phase5"></div>
+  </div>
+
+  <div class="tip">
+    <div class="tip-icon">💡</div>
+    <div class="tip-text"><strong>Dica:</strong> Não tente fazer tudo de uma vez. Foque nas Fases 1 e 3 primeiro — um portfólio sólido com Python já abre muitas portas. C++ pode ser desenvolvido em paralelo no seu tempo livre.</div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="overlay" id="overlay">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <div class="modal-header-left">
+        <div class="modal-emoji" id="m-emoji"></div>
+        <div>
+          <div class="modal-title" id="m-title"></div>
+          <div class="modal-badge" id="m-badge"></div>
+        </div>
+      </div>
+      <button class="modal-close" id="modal-close">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-section">
+        <div class="modal-section-title">O que estudar</div>
+        <div class="modal-topics" id="m-topics"></div>
+      </div>
+      <div class="modal-section">
+        <div class="modal-section-title">Onde estudar de graça</div>
+        <div class="modal-resources" id="m-resources"></div>
+      </div>
+      <button class="modal-done-btn" id="m-done-btn"></button>
+    </div>
+  </div>
+</div>
+
+<script>
+const data = {
+  phase1: [
+    {
+      emoji:'📐', title:'Estruturas de dados', desc:'Listas, dicionários, sets, tuplas — domine o uso nativo do Python.', badge:'Python',
+      topics:[
+        {name:'Listas e list comprehensions', detail:'Criação, fatiamento, métodos como append, pop, sort, reverse.'},
+        {name:'Dicionários e sets', detail:'Quando usar cada um, operações de busca O(1), iteração eficiente.'},
+        {name:'Tuplas e imutabilidade', detail:'Por que usar tuplas? Named tuples, unpacking de variáveis.'},
+        {name:'Pilhas, filas e deque', detail:'Implementação com listas e collections.deque para performance.'},
+      ],
+      resources:[
+        {icon:'🎓', name:'CS50P — Harvard', desc:'Curso oficial de Python gratuito, legendado em PT', url:'https://cs50.harvard.edu/python/', free:true},
+        {icon:'📖', name:'Documentação oficial Python (PT)', desc:'Tutorial de estruturas de dados nativas', url:'https://docs.python.org/pt-br/3/tutorial/datastructures.html', free:true},
+        {icon:'▶️', name:'Curso em Vídeo — Python', desc:'Canal brasileiro completo e gratuito do Gustavo Guanabara', url:'https://www.youtube.com/@CursoemVideo', free:true},
+      ]
+    },
+    {
+      emoji:'🔁', title:'POO (Orientação a Objetos)', desc:'Classes, herança, encapsulamento, polimorfismo.', badge:'Python',
+      topics:[
+        {name:'Classes e instâncias', detail:'__init__, self, atributos de classe vs instância — base de tudo.'},
+        {name:'Herança e polimorfismo', detail:'Subclasses, super(), override de métodos, MRO (Method Resolution Order).'},
+        {name:'Encapsulamento', detail:'Atributos privados (_var, __var), properties com @property.'},
+        {name:'Métodos especiais (dunder)', detail:'__str__, __repr__, __len__, __eq__ — deixar objetos mais pythônicos.'},
+      ],
+      resources:[
+        {icon:'🎓', name:'Real Python — OOP', desc:'Guia completo de POO em Python, muito bem escrito', url:'https://realpython.com/python3-object-oriented-programming/', free:true},
+        {icon:'▶️', name:'Otávio Miranda — POO Python', desc:'Playlist em português, bem explicada e prática', url:'https://www.youtube.com/@otaviomirandaoficial', free:true},
+        {icon:'📖', name:'Python.org — Classes (PT)', desc:'Documentação oficial traduzida sobre classes', url:'https://docs.python.org/pt-br/3/tutorial/classes.html', free:true},
+      ]
+    },
+    {
+      emoji:'⚡', title:'Algoritmos essenciais', desc:'Ordenação, busca, recursão, complexidade Big-O.', badge:'Python',
+      topics:[
+        {name:'Complexidade Big-O', detail:'O(1), O(n), O(n²), O(log n) — saber comparar e justificar algoritmos.'},
+        {name:'Busca linear e binária', detail:'Quando cada uma se aplica, implementação e comparação de performance.'},
+        {name:'Ordenação', detail:'Bubble sort, merge sort, quick sort — entender a lógica por trás.'},
+        {name:'Recursão', detail:'Casos base, chamadas recursivas, fatorial, Fibonacci, DFS em árvores.'},
+      ],
+      resources:[
+        {icon:'🎓', name:'CS50x — Harvard', desc:'Semana 3 foca em algoritmos e sorting, gratuito', url:'https://cs50.harvard.edu/x/', free:true},
+        {icon:'🎮', name:'Visualgo', desc:'Visualize algoritmos rodando em tempo real (tem PT)', url:'https://visualgo.net/pt', free:true},
+        {icon:'▶️', name:'Programação Dinâmica', desc:'Canal BR excelente sobre algoritmos e estruturas de dados', url:'https://www.youtube.com/@Programacao_Dinamica', free:true},
+      ]
+    },
+    {
+      emoji:'🧪', title:'Testes com pytest', desc:'Escrever testes unitários é esperado em quase toda empresa.', badge:'Python',
+      topics:[
+        {name:'Por que testar?', detail:'TDD básico: escreva o teste antes do código. Reduz bugs e aumenta confiança.'},
+        {name:'pytest básico', detail:'assert, funções de teste com prefixo test_, rodar com CLI (pytest -v).'},
+        {name:'Fixtures e conftest.py', detail:'Reutilizar dados de setup entre testes sem repetição de código.'},
+        {name:'Mocking', detail:'unittest.mock para simular dependências externas como APIs e bancos.'},
+      ],
+      resources:[
+        {icon:'📖', name:'Documentação oficial pytest', desc:'Completa, com exemplos práticos em cada seção', url:'https://docs.pytest.org/en/stable/', free:true},
+        {icon:'🎓', name:'Real Python — pytest', desc:'Tutorial completo passo a passo para iniciantes', url:'https://realpython.com/pytest-python-testing/', free:true},
+        {icon:'▶️', name:'ArjanCodes (YouTube)', desc:'Vídeos sobre testes e boas práticas Python (inglês)', url:'https://www.youtube.com/@ArjanCodes', free:true},
+      ]
+    },
+    {
+      emoji:'📦', title:'Bibliotecas populares', desc:'requests, pandas, FastAPI — escolha pelo seu foco.', badge:'Python',
+      topics:[
+        {name:'requests', detail:'HTTP GET/POST, headers, autenticação, parsing de JSON — consumir APIs.'},
+        {name:'pandas', detail:'DataFrames, leitura de CSV, filtragem, groupby — para análise de dados.'},
+        {name:'FastAPI', detail:'Criação rápida de APIs REST com docs automáticas — muito pedido em vagas.'},
+        {name:'SQLAlchemy', detail:'ORM para bancos relacionais — conecta Python ao PostgreSQL/SQLite.'},
+      ],
+      resources:[
+        {icon:'📖', name:'FastAPI Docs (PT)', desc:'Documentação oficial excelente com tutorial completo', url:'https://fastapi.tiangolo.com/pt/', free:true},
+        {icon:'📖', name:'Pandas User Guide', desc:'Guia do usuário oficial com exemplos e exercícios', url:'https://pandas.pydata.org/docs/user_guide/', free:true},
+        {icon:'🎓', name:'Kaggle — Python', desc:'Mini-cursos gratuitos e práticos focados em dados', url:'https://www.kaggle.com/learn/python', free:true},
+      ]
+    },
+    {
+      emoji:'🗃️', title:'Git & versionamento', desc:'Commits, branches, pull requests — fluxo básico de trabalho.', badge:'Essencial',
+      topics:[
+        {name:'Comandos essenciais', detail:'git init, add, commit, push, pull, clone, status, log — a base diária.'},
+        {name:'Branches e merges', detail:'Criar branch, mudar entre elas, fazer merge, resolver conflitos de código.'},
+        {name:'GitHub Flow', detail:'Fork, pull request, code review — o fluxo real usado em empresas.'},
+        {name:'.gitignore e boas práticas', detail:'O que não versionar (venv, .env), escrever mensagens de commit claras.'},
+      ],
+      resources:[
+        {icon:'▶️', name:'Git & GitHub — Curso em Vídeo', desc:'Playlist em PT do zero até PR, muito didática', url:'https://www.youtube.com/playlist?list=PLHz_AreHm4dm7ZULPAmadvNhH6vk9oNZA', free:true},
+        {icon:'🎮', name:'Learn Git Branching', desc:'Aprenda Git de forma visual e interativa (tem PT)', url:'https://learngitbranching.js.org/?locale=pt_BR', free:true},
+        {icon:'📖', name:'Pro Git Book (PT)', desc:'Livro completo e gratuito sobre Git em português', url:'https://git-scm.com/book/pt-br/v2', free:true},
+      ]
+    },
+  ],
+  phase2: [
+    {
+      emoji:'🔤', title:'Sintaxe básica C++', desc:'Tipos, ponteiros, referências — o que difere do Python.', badge:'C++',
+      topics:[
+        {name:'Tipos primitivos e variáveis', detail:'int, float, double, char, bool, const — tipagem estática obrigatória.'},
+        {name:'Ponteiros e referências', detail:'O maior choque vindo do Python. Entender * e & é fundamental.'},
+        {name:'Funções e sobrecarga', detail:'Assinatura de função, parâmetros default, function overloading.'},
+        {name:'Entrada e saída', detail:'cin, cout, cerr — o equivalente C++ do print() e input() do Python.'},
+      ],
+      resources:[
+        {icon:'🎓', name:'learncpp.com', desc:'O melhor recurso gratuito de C++ na internet, muito completo', url:'https://www.learncpp.com/', free:true},
+        {icon:'🎮', name:'Exercism — C++', desc:'Exercícios práticos com mentoria gratuita da comunidade', url:'https://exercism.org/tracks/cpp', free:true},
+        {icon:'▶️', name:'The Cherno — C++ Series', desc:'Série completa e didática no YouTube (inglês)', url:'https://www.youtube.com/playlist?list=PLlrATfBNZ98dudnM48yfGUldqGD0S4FFb', free:true},
+      ]
+    },
+    {
+      emoji:'🧩', title:'Gerenciamento de memória', desc:'Stack vs heap, new/delete, smart pointers.', badge:'C++',
+      topics:[
+        {name:'Stack vs Heap', detail:'Onde cada variável vive, tempo de vida, quando alocar em cada região.'},
+        {name:'new e delete', detail:'Alocação dinâmica manual — e os perigos de memory leak e dangling pointers.'},
+        {name:'Smart pointers', detail:'unique_ptr, shared_ptr, weak_ptr — C++ moderno (C++11+) é mais seguro.'},
+        {name:'RAII', detail:'Resource Acquisition Is Initialization — padrão que garante limpeza automática.'},
+      ],
+      resources:[
+        {icon:'🎓', name:'learncpp.com — Memória dinâmica', desc:'Capítulos 11 e 12 cobrem alocação em profundidade', url:'https://www.learncpp.com/cpp-tutorial/dynamic-memory-allocation-with-new-and-delete/', free:true},
+        {icon:'▶️', name:'Cherno — Pointers em C++', desc:'Vídeo dedicado só a ponteiros, muito claro', url:'https://www.youtube.com/watch?v=DTxHyVn0ODg', free:true},
+        {icon:'📖', name:'cppreference.com', desc:'Referência técnica completa de toda a linguagem C++', url:'https://en.cppreference.com/w/', free:true},
+      ]
+    },
+    {
+      emoji:'📚', title:'STL (Standard Template Library)', desc:'Vectors, maps, algorithms — a biblioteca padrão do C++.', badge:'C++',
+      topics:[
+        {name:'Containers', detail:'vector, list, set, map, unordered_map — quando e por que usar cada um.'},
+        {name:'Iteradores', detail:'Como percorrer containers com begin()/end() e range-based for loops.'},
+        {name:'Algorithms', detail:'sort, find, count, transform, accumulate — evite reinventar a roda.'},
+        {name:'std::string', detail:'Operações com strings em C++ — comparação com strings do Python.'},
+      ],
+      resources:[
+        {icon:'📖', name:'cppreference — Containers', desc:'Documentação completa de todos os containers STL', url:'https://en.cppreference.com/w/cpp/container', free:true},
+        {icon:'🎓', name:'learncpp.com — STL', desc:'Capítulo 16 cobre containers e algoritmos', url:'https://www.learncpp.com/cpp-tutorial/an-introduction-to-stdvector/', free:true},
+        {icon:'🎮', name:'HackerRank — C++', desc:'Pratique STL com desafios reais e testados', url:'https://www.hackerrank.com/domains/cpp', free:true},
+      ]
+    },
+    {
+      emoji:'🏗️', title:'POO em C++', desc:'Classes, construtores, destrutores, herança múltipla.', badge:'C++',
+      topics:[
+        {name:'Classes e access modifiers', detail:'public, private, protected — controle de acesso aos membros.'},
+        {name:'Construtores e destrutores', detail:'Lifecycle do objeto, construtor de cópia, move semantics (C++11).'},
+        {name:'Herança e funções virtuais', detail:'Herança simples e múltipla, virtual, override, polimorfismo real.'},
+        {name:'Sobrecarga de operadores', detail:'operator+, operator<< — customizar comportamento dos seus tipos.'},
+      ],
+      resources:[
+        {icon:'🎓', name:'learncpp.com — Classes', desc:'Capítulos 13–15 cobrem POO em C++ do zero', url:'https://www.learncpp.com/cpp-tutorial/welcome-to-object-oriented-programming/', free:true},
+        {icon:'▶️', name:'Cherno — OOP em C++', desc:'Série sobre classes, muito didática e visual', url:'https://www.youtube.com/watch?v=wN0x9eZLix4', free:true},
+        {icon:'📖', name:'cppreference — Classes', desc:'Referência técnica de declaração e uso de classes', url:'https://en.cppreference.com/w/cpp/language/classes', free:true},
+      ]
+    },
+  ],
+  phase3: [
+    {
+      emoji:'🐙', title:'Perfil GitHub organizado', desc:'README bonito, projetos fixados, commits frequentes.', badge:'Portfólio',
+      topics:[
+        {name:'Profile README', detail:'Arquivo README.md no repositório com seu nome de usuário — vitrine pessoal.'},
+        {name:'Repositórios fixados', detail:'Selecione 4–6 projetos relevantes para fixar no topo do perfil.'},
+        {name:'Contribuições consistentes', detail:'Commits frequentes formam o gráfico verde — sinaliza disciplina.'},
+        {name:'Descrições e tópicos', detail:'Adicione descrição, link, e tags (topics) em cada repositório.'},
+      ],
+      resources:[
+        {icon:'🎨', name:'GitHub Readme Stats', desc:'Widgets de estatísticas automáticas para seu perfil', url:'https://github.com/anuraghazra/github-readme-stats', free:true},
+        {icon:'🎨', name:'Readme.so', desc:'Editor visual de README com seções prontas', url:'https://readme.so/pt', free:true},
+        {icon:'📖', name:'GitHub Docs (PT)', desc:'Guia oficial sobre perfis, repositórios e README', url:'https://docs.github.com/pt', free:true},
+      ]
+    },
+    {
+      emoji:'🛠️', title:'2–3 projetos autorais', desc:'Algo que você usaria: bot, API, ferramenta, automação.', badge:'Portfólio',
+      topics:[
+        {name:'Bot de Discord ou Telegram', detail:'Muito popular, usa Python, mostra lógica real e integração de APIs.'},
+        {name:'Automatizador de tarefas', detail:'Scraping com BeautifulSoup, automação com Selenium ou Playwright.'},
+        {name:'CLI Tool', detail:'Ferramenta de linha de comando com argparse ou Click — simples e útil.'},
+        {name:'API REST completa', detail:'FastAPI + banco de dados + deploy — projeto completo que impressiona.'},
+      ],
+      resources:[
+        {icon:'🎓', name:'Full Stack Python', desc:'Guia de como construir e deployar apps em Python', url:'https://www.fullstackpython.com/', free:true},
+        {icon:'🌐', name:'Railway.app', desc:'Deploy gratuito para seus projetos Python e APIs', url:'https://railway.app/', free:true},
+        {icon:'🌐', name:'Render.com', desc:'Alternativa gratuita de deploy para backends Python', url:'https://render.com/', free:true},
+      ]
+    },
+    {
+      emoji:'🌐', title:'Projeto web com Python', desc:'FastAPI ou Django — uma API funcional já impressiona.', badge:'Portfólio',
+      topics:[
+        {name:'FastAPI básico', detail:'Criar endpoints GET/POST, validação com Pydantic, docs interativas automáticas.'},
+        {name:'Banco de dados com SQLite', detail:'SQLAlchemy ORM — CRUD completo (Create, Read, Update, Delete).'},
+        {name:'Autenticação com JWT', detail:'Login com tokens — diferencial importante e muito valorizado.'},
+        {name:'Deploy em produção', detail:'Railway, Render ou Fly.io — coloque no ar com free tier real.'},
+      ],
+      resources:[
+        {icon:'📖', name:'FastAPI Tutorial oficial (PT)', desc:'Do zero a API completa com docs interativas', url:'https://fastapi.tiangolo.com/pt/tutorial/', free:true},
+        {icon:'▶️', name:'FastAPI do zero (YouTube BR)', desc:'Tutoriais em português muito bem explicados', url:'https://www.youtube.com/results?search_query=fastapi+tutorial+portugues+2024', free:true},
+        {icon:'🌐', name:'Fly.io', desc:'Deploy gratuito com suporte a Python/Docker', url:'https://fly.io/', free:true},
+      ]
+    },
+    {
+      emoji:'📝', title:'README bem escrito', desc:'Descreva o problema, solução e como rodar.', badge:'Portfólio',
+      topics:[
+        {name:'Estrutura do README', detail:'Título, descrição, tecnologias usadas, como instalar, como rodar, screenshots.'},
+        {name:'Badges e shields', detail:'Ícones de linguagem, versão, licença, status do CI — shields.io.'},
+        {name:'Screenshots e GIFs', detail:'Uma imagem vale mais que mil palavras — mostre o projeto funcionando.'},
+        {name:'Escrever em inglês', detail:'Abre portas internacionais, mostra profissionalismo — use o DeepL se precisar.'},
+      ],
+      resources:[
+        {icon:'🎨', name:'Readme.so', desc:'Editor visual de README com templates prontos em PT', url:'https://readme.so/pt', free:true},
+        {icon:'📖', name:'Awesome README', desc:'Exemplos incríveis de READMEs para se inspirar', url:'https://github.com/matiassingers/awesome-readme', free:true},
+        {icon:'🛡️', name:'Shields.io', desc:'Crie badges personalizados para seus projetos', url:'https://shields.io/', free:true},
+      ]
+    },
+    {
+      emoji:'🔗', title:'LinkedIn completo', desc:'Foto, bio técnica, projetos e habilidades listadas.', badge:'Carreira',
+      topics:[
+        {name:'Foto profissional', detail:'Foto boa aumenta visualizações em até 14x. Fundo neutro, rosto visível.'},
+        {name:'Headline técnica', detail:'Ex: "Desenvolvedor Python | Buscando primeira vaga | FastAPI · Git · SQL".'},
+        {name:'Seção de projetos', detail:'Adicione seus projetos do GitHub com link, descrição e tecnologias usadas.'},
+        {name:'Sobre + Habilidades', detail:'Conte sua história em 3–4 linhas. Liste suas skills técnicas com honestidade.'},
+      ],
+      resources:[
+        {icon:'▶️', name:'LinkedIn para devs iniciantes (YT BR)', desc:'Como montar perfil que chama atenção de recrutadores', url:'https://www.youtube.com/results?search_query=linkedin+desenvolvedor+iniciante+2024', free:true},
+        {icon:'🌐', name:'LinkedIn.com', desc:'A principal rede para vagas de TI no Brasil e no mundo', url:'https://www.linkedin.com/', free:true},
+        {icon:'🎨', name:'Canva — Capa LinkedIn', desc:'Crie uma capa profissional gratuita para o perfil', url:'https://www.canva.com/pt_br/criar/capas-linkedin/', free:true},
+      ]
+    },
+  ],
+  phase4: [
+    {
+      emoji:'📄', title:'Currículo 1 página', desc:'Objetivo claro, projetos com resultados, stack tecnológica.', badge:'Candidatura',
+      topics:[
+        {name:'Formato e layout', detail:'1 página, fonte legível (11–12pt), espaçamento adequado, sem foto obrigatória.'},
+        {name:'Seção de projetos', detail:'2–3 projetos com link do GitHub e uma linha descrevendo o que cada um faz.'},
+        {name:'Stack tecnológica', detail:'Liste as tecnologias que domina: Python, Git, FastAPI, SQL, pytest etc.'},
+        {name:'Objetivo claro', detail:'"Desenvolvedor Python Júnior buscando primeira oportunidade em desenvolvimento backend".'},
+      ],
+      resources:[
+        {icon:'🎨', name:'FlowCV', desc:'Criador de currículo profissional gratuito, exporta em PDF', url:'https://flowcv.com/', free:true},
+        {icon:'🎨', name:'Canva — Currículo', desc:'Templates gratuitos e editáveis de currículo', url:'https://www.canva.com/pt_br/curriculo/', free:true},
+        {icon:'▶️', name:'Currículo dev iniciante (YT BR)', desc:'Como montar currículo sem experiência formal', url:'https://www.youtube.com/results?search_query=curriculo+desenvolvedor+iniciante+sem+experiencia', free:true},
+      ]
+    },
+    {
+      emoji:'🎯', title:'Vagas de estágio / júnior', desc:'Gupy, LinkedIn, 99jobs — aplique com consistência.', badge:'Candidatura',
+      topics:[
+        {name:'Onde procurar', detail:'Gupy, LinkedIn Jobs, Indeed, 99jobs, CIEE, Nube, Catho, Glassdoor.'},
+        {name:'Palavras-chave certas', detail:'"Estagiário Python", "Dev Júnior", "Desenvolvedor iniciante", "Trainee TI".'},
+        {name:'Volume de aplicações', detail:'Aplique para 5–10 vagas por semana. Consistência é mais importante que perfeição.'},
+        {name:'Carta de apresentação', detail:'3 parágrafos curtos: quem você é, o que sabe fazer, por que quer essa vaga.'},
+      ],
+      resources:[
+        {icon:'🌐', name:'Gupy', desc:'Maior plataforma de vagas BR, muitas de TI', url:'https://portal.gupy.io/', free:true},
+        {icon:'🌐', name:'99jobs', desc:'Focado em tech, bom para júnior e estágio', url:'https://99jobs.com/', free:true},
+        {icon:'🌐', name:'CIEE', desc:'Maior banco de estágios do Brasil', url:'https://portal.ciee.org.br/', free:true},
+      ]
+    },
+    {
+      emoji:'💻', title:'Treinar entrevistas técnicas', desc:'LeetCode (fáceis), HackerRank — pratique 3x/semana.', badge:'Técnico',
+      topics:[
+        {name:'Começar pelos Easy do LeetCode', detail:'Arrays, strings, hashmaps — problemas que aparecem em 80% das entrevistas júnior.'},
+        {name:'Padrões comuns', detail:'Two pointers, sliding window, frequência com dicionário, BFS/DFS básico.'},
+        {name:'Explicar em voz alta', detail:'Pratique falar seu raciocínio enquanto resolve — é exatamente o que avaliam.'},
+        {name:'Testes de lógica HackerRank', detail:'Muitas empresas BR usam testes HackerRank — familiarize-se com o formato.'},
+      ],
+      resources:[
+        {icon:'🎮', name:'LeetCode', desc:'Filtre por Easy + Python. Meta inicial: resolver 50 problemas', url:'https://leetcode.com/problemset/', free:true},
+        {icon:'🎮', name:'HackerRank', desc:'Testes com certificados reconhecidos por empresas BR', url:'https://www.hackerrank.com/', free:true},
+        {icon:'🎮', name:'Beecrowd (antigo URI)', desc:'Plataforma brasileira de desafios de programação', url:'https://www.beecrowd.com.br/', free:true},
+      ]
+    },
+    {
+      emoji:'🤝', title:'Networking', desc:'Comunidades, meetups, eventos online — pessoas indicam.', badge:'Carreira',
+      topics:[
+        {name:'Comunidades no Discord e Telegram', detail:'Dev Community BR, Python Brasil, Rocketseat — entre e participe ativamente.'},
+        {name:'Eventos e meetups', detail:'Python Brasil (conferência anual), TDC, eventos online gratuitos no Eventbrite.'},
+        {name:'Contribuir em open source', detail:'Mesmo corrigir um typo na documentação já é contribuição real e vale no currículo.'},
+        {name:'Aprender em público', detail:'Poste o que você aprendeu no LinkedIn — gera visibilidade e conexões.'},
+      ],
+      resources:[
+        {icon:'💬', name:'Python Brasil — Telegram', desc:'Maior comunidade Python em português', url:'https://t.me/pythonbr', free:true},
+        {icon:'🌐', name:'Meetup.com', desc:'Encontre eventos de tecnologia presenciais e online', url:'https://www.meetup.com/pt-BR/', free:true},
+        {icon:'🌐', name:'Eventbrite — Tech', desc:'Eventos gratuitos de tecnologia no Brasil', url:'https://www.eventbrite.com.br/', free:true},
+      ]
+    },
+    {
+      emoji:'🗣️', title:'Mock interviews', desc:'Pratique explicar seu raciocínio em voz alta. Grave e ouça.', badge:'Entrevista',
+      topics:[
+        {name:'Método STAR', detail:'Situação, Tarefa, Ação, Resultado — estrutura para perguntas comportamentais.'},
+        {name:'Perguntas técnicas comuns', detail:'"O que é POO?", "O que é uma API REST?", "Como o Git funciona? O que é um branch?"'},
+        {name:'Gravar e rever', detail:'Grave-se respondendo no celular, assista, identifique onde melhorar.'},
+        {name:'Tech Interview Handbook', detail:'Guia gratuito completo cobrindo todo o processo de entrevistas em tech.'},
+      ],
+      resources:[
+        {icon:'🎮', name:'Pramp', desc:'Mock interviews gratuitas com outros devs ao vivo', url:'https://www.pramp.com/', free:true},
+        {icon:'📖', name:'Tech Interview Handbook', desc:'Guia completo gratuito de todo o processo de entrevistas', url:'https://www.techinterviewhandbook.org/', free:true},
+        {icon:'▶️', name:'Como passar em entrevistas técnicas (YT BR)', desc:'Dicas de quem já passou por grandes empresas', url:'https://www.youtube.com/results?search_query=como+passar+entrevista+tecnica+desenvolvedor+junior', free:true},
+      ]
+    },
+  ],
+  phase5: [
+    {
+      emoji:'✍️', title:'Comunicação escrita', desc:'Saber explicar código, abrir issues e escrever PRs claros.', badge:'Soft Skill',
+      topics:[
+        {name:'Mensagens de commit', detail:'Commits claros: "fix: corrige cálculo de desconto no checkout" vs apenas "ajustes".'},
+        {name:'Descrição de Pull Request', detail:'O que mudou, por que mudou, e como testar — padrão em times profissionais.'},
+        {name:'Abrir issues bem escritas', detail:'Problema claro, passos para reproduzir, comportamento esperado vs atual.'},
+        {name:'Comunicação assíncrona', detail:'Mensagens claras no Slack/Discord — contexto, pergunta, o que já tentou.'},
+      ],
+      resources:[
+        {icon:'📖', name:'Conventional Commits', desc:'Padrão de mensagens de commit adotado pela indústria', url:'https://www.conventionalcommits.org/pt-br/', free:true},
+        {icon:'▶️', name:'Filipe Deschamps (YouTube)', desc:'Canal BR sobre carreira dev, soft skills e crescimento', url:'https://www.youtube.com/@FilipeDeschamps', free:true},
+        {icon:'📖', name:'Google Engineering Practices', desc:'Guia público do processo de code review do Google', url:'https://google.github.io/eng-practices/', free:true},
+      ]
+    },
+    {
+      emoji:'🔍', title:'Aprender a pesquisar', desc:'Documentação oficial, Stack Overflow, a pergunta certa.', badge:'Soft Skill',
+      topics:[
+        {name:'Ler documentação oficial', detail:'Todo dev sênior lê docs. Não dependa só de tutoriais de terceiros.'},
+        {name:'Stack Overflow', detail:'Como fazer uma boa pergunta: contexto, código mínimo reproduzível, o que já tentou.'},
+        {name:'Pesquisas eficientes', detail:'"python como [verbo] [lib] [versão]" funciona muito melhor que perguntas vagas.'},
+        {name:'Usar o erro a seu favor', detail:'Copie a mensagem de erro exata no Google — resolve 90% dos problemas.'},
+      ],
+      resources:[
+        {icon:'📖', name:'Stack Overflow em Português', desc:'Versão PT do Stack Overflow com comunidade ativa', url:'https://pt.stackoverflow.com/', free:true},
+        {icon:'📖', name:'DevDocs.io', desc:'Documentação de várias linguagens e libs num só lugar offline', url:'https://devdocs.io/', free:true},
+        {icon:'🌐', name:'DeepL Translator', desc:'Tradutor preciso para ler docs em inglês com facilidade', url:'https://www.deepl.com/pt-BR/translator', free:true},
+      ]
+    },
+    {
+      emoji:'🔄', title:'Receber feedback', desc:'Code review sem ego — cada crítica é oportunidade de evolução.', badge:'Soft Skill',
+      topics:[
+        {name:'Code review como aprendizado', detail:'Cada comentário é uma oportunidade de melhorar — não é ataque pessoal.'},
+        {name:'Perguntar quando não entender', detail:'"Pode explicar o motivo da sugestão?" é sinal de maturidade profissional.'},
+        {name:'Revisar código dos outros', detail:'Fazer code review te ensina tanto quanto escrever código — pratique.'},
+        {name:'Não defender código por ego', detail:'O objetivo é o melhor software possível, não ter razão.'},
+      ],
+      resources:[
+        {icon:'📖', name:'Google — Code Review Guide', desc:'Guia público interno do Google sobre revisão de código', url:'https://google.github.io/eng-practices/review/', free:true},
+        {icon:'▶️', name:'Akitando (YouTube)', desc:'Canal técnico e filosófico sobre carreira e mentalidade dev', url:'https://www.youtube.com/@Akitando', free:true},
+        {icon:'▶️', name:'Filipe Deschamps (YouTube)', desc:'Conteúdo sobre mindset e crescimento profissional', url:'https://www.youtube.com/@FilipeDeschamps', free:true},
+      ]
+    },
+    {
+      emoji:'⏱️', title:'Consistência > intensidade', desc:'30 min por dia supera 8h no fim de semana.', badge:'Mindset',
+      topics:[
+        {name:'Hábito de estudo diário', detail:'Defina um horário fixo — mesmo que seja 20 a 30 minutos por dia.'},
+        {name:'Rastrear progresso', detail:'GitHub contributions, Anki para revisão espaçada, Notion para anotações.'},
+        {name:'Aprender em público', detail:'Poste o que aprendeu no LinkedIn/Twitter — reforça o aprendizado e gera rede.'},
+        {name:'Aceitar o platô', detail:'Todo dev passa por fases de aprendizado lento. Persista — o salto vem depois.'},
+      ],
+      resources:[
+        {icon:'📖', name:'Learn in Public — Swyx', desc:'O artigo que define aprender em público como estratégia de carreira', url:'https://www.swyx.io/learn-in-public', free:true},
+        {icon:'▶️', name:'Akitando (YouTube)', desc:'Vídeos honestos sobre o que ninguém te conta na carreira dev', url:'https://www.youtube.com/@Akitando', free:true},
+        {icon:'🎯', name:'Habitica', desc:'App gratuito que transforma seus hábitos de estudo em RPG', url:'https://habitica.com/', free:true},
+      ]
+    },
+  ],
+};
+
+const STORAGE_KEY = 'roadmap_prog_v2';
+function load() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch { return {}; } }
+function save(s) { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); } catch {} }
+let state = load();
+
+function updateProgress() {
+  const all = document.querySelectorAll('.card').length;
+  const done = document.querySelectorAll('.card.done').length;
+  const pct = all ? Math.round((done / all) * 100) : 0;
+  document.getElementById('fill').style.width = pct + '%';
+  document.getElementById('pct').textContent = pct + '%';
+}
+
+let currentId = null;
+const overlay = document.getElementById('overlay');
+
+function openModal(item, id) {
+  currentId = id;
+  document.getElementById('m-emoji').textContent = item.emoji;
+  document.getElementById('m-title').textContent = item.title;
+  const badge = document.getElementById('m-badge');
+  badge.textContent = item.badge;
+  badge.style.cssText = 'background:rgba(59,130,246,0.15);color:var(--python)';
+
+  document.getElementById('m-topics').innerHTML = item.topics.map(t =>
+    `<div class="modal-topic"><strong>${t.name}</strong><span>${t.detail}</span></div>`
+  ).join('');
+
+  document.getElementById('m-resources').innerHTML = item.resources.map(r =>
+    `<div class="modal-resource" onclick="window.open('${r.url}','_blank')">
+      <div class="resource-icon">${r.icon}</div>
+      <div class="resource-info">
+        <span class="resource-name">${r.name}</span>
+        <span class="resource-desc">${r.desc}</span>
+      </div>
+      ${r.free ? '<span class="resource-free">GRÁTIS</span>' : ''}
+      <span class="resource-arrow">↗</span>
+    </div>`
+  ).join('');
+
+  updateDoneBtn();
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  overlay.classList.remove('open');
+  document.body.style.overflow = '';
+  currentId = null;
+}
+
+function updateDoneBtn() {
+  const btn = document.getElementById('m-done-btn');
+  const done = !!state[currentId];
+  btn.textContent = done ? '✓ Marcar como não concluído' : '✓ Marcar como concluído';
+  btn.className = 'modal-done-btn ' + (done ? 'unmark' : 'mark');
+}
+
+document.getElementById('m-done-btn').addEventListener('click', () => {
+  if (!currentId) return;
+  state[currentId] = !state[currentId];
+  save(state);
+  updateDoneBtn();
+  render();
+});
+
+document.getElementById('modal-close').addEventListener('click', closeModal);
+overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+function render() {
+  Object.entries(data).forEach(([phase, items]) => {
+    const container = document.getElementById(phase);
+    if (!container) return;
+    container.innerHTML = '';
+    items.forEach((item, i) => {
+      const id = `${phase}_${i}`;
+      const done = !!state[id];
+      const card = document.createElement('div');
+      card.className = 'card' + (done ? ' done' : '');
+      card.innerHTML = `
+        <div class="card-top">
+          <div class="card-emoji">${item.emoji}</div>
+          <div class="card-check">${done ? '✓' : ''}</div>
+        </div>
+        <div class="card-title">${item.title}</div>
+        <div class="card-desc">${item.desc}</div>
+        <div class="card-badge">${item.badge}</div>
+        <div class="card-hint">↗ clique para ver detalhes e recursos gratuitos</div>
+      `;
+      card.addEventListener('click', () => openModal(item, id));
+      container.appendChild(card);
+    });
+  });
+  updateProgress();
+}
+
+render();
+</script>
+</body>
+</html>
